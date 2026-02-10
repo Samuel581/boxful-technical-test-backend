@@ -23,33 +23,31 @@ export class AuthService {
       registerUserData.password,
     );
 
-    const user = await this.usersService.createUser({
+    await this.usersService.createUser({
       ...registerUserData,
       password: hashedPassword,
     });
 
-    return { user };
+    return;
   }
 
   async login(loginData: LoginDto) {
     const user = await this.usersService.findByEmail(loginData.email);
-    if (!user)
-      throw new BadRequestException(
-        `User with email ${loginData.email} not found`,
-      );
+    if (!user) throw new BadRequestException(`Invalid credentials`);
 
     const passwordMatches = await this.cryptoService.comparePassword(
       loginData.password,
       user.password,
     );
-    if (!passwordMatches) throw new UnauthorizedException('Invalid password');
+    if (!passwordMatches)
+      throw new UnauthorizedException('Invalid credentials');
 
     const payload: AuthJwtPayload = {
       sub: user.id,
       email: user.email,
     };
-    const token = await this.jwtService.signAsync(payload);
+    await this.jwtService.signAsync(payload);
 
-    return { token };
+    return;
   }
 }
