@@ -1,98 +1,298 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Boxful Orders API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+REST API for a shipping orders management system built with NestJS, Prisma, and MongoDB.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Tech Stack
 
-## Description
+| Layer          | Technology                          |
+| -------------- | ----------------------------------- |
+| Runtime        | Node.js 20+                         |
+| Framework      | NestJS 11                           |
+| Language       | TypeScript 5                        |
+| Database       | MongoDB (Atlas)                     |
+| ORM            | Prisma 6                            |
+| Authentication | JWT (Passport)                      |
+| Validation     | class-validator + class-transformer |
+| Documentation  | Swagger / OpenAPI 3                 |
+| Package Manager    | pnpm                               |
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Getting Started
 
-## Project setup
+### Prerequisites (local)
 
-```bash
-$ pnpm install
-```
+- Node.js >= 20
+- pnpm >= 9
+- A MongoDB instance (local or Atlas)
 
-## Compile and run the project
+### Installation
 
 ```bash
-# development
-$ pnpm run start
+# Clone the repository
+git clone https://github.com/Samuel581/boxful-technical-test-backend.git
+cd boxful-technical-test-backend
 
-# watch mode
-$ pnpm run start:dev
+# Install dependencies
+pnpm install
 
-# production mode
-$ pnpm run start:prod
+# Copy environment variables
+cp .env.example .env
 ```
 
-## Run tests
+### Environment Variables
+
+Edit the `.env` file with your values:
+
+```env
+DATABASE_URL=mongodb+srv://<user>:<password>@<cluster>.mongodb.net/<database>
+JWT_SECRET=your_secret_key_here
+SALT_ROUNDS=10
+PORT=3000
+```
+
+| Variable       | Description                                | Required |
+| -------------- | ------------------------------------------ | -------- |
+| `DATABASE_URL` | MongoDB connection string                  | Yes      |
+| `JWT_SECRET`   | Secret key for signing JWT tokens          | Yes      |
+| `SALT_ROUNDS`  | bcrypt hashing rounds (default: 10)        | No       |
+| `PORT`         | Port the server listens on (default: 3000) | No       |
+
+### Database Setup
 
 ```bash
-# unit tests
-$ pnpm run test
+# Generate the Prisma client
+npx prisma generate
 
-# e2e tests
-$ pnpm run test:e2e
+# Push the schema to the database (creates collections and indexes)
+npx prisma db push
 
-# test coverage
-$ pnpm run test:cov
+# Seed the database with sample data
+npx prisma db seed
 ```
 
-## Deployment
+The seed creates **5 users**, **24 orders**, and **35 packages** with realistic data. All seed users share the password `Password123`.
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+| Test Account                | Orders | Statuses covered                          |
+| --------------------------- | ------ | ----------------------------------------- |
+| carlos.martinez@example.com | 6      | DELIVERED, IN_TRANSIT, PENDING, CANCELLED |
+| maria.garcia@example.com    | 5      | DELIVERED, IN_TRANSIT, PENDING            |
+| alex.rivera@example.com     | 4      | DELIVERED, IN_TRANSIT, PENDING            |
+| sofia.flores@example.com    | 4      | DELIVERED, CANCELLED, PENDING             |
+| diego.ramos@example.com     | 5      | DELIVERED, IN_TRANSIT, PENDING            |
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+### Running the App
 
 ```bash
-$ pnpm install -g @nestjs/mau
-$ mau deploy
+# Development (hot reload)
+pnpm start:dev
+
+# Production build
+pnpm build
+pnpm start:prod
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+The server starts on `http://localhost:3000` (or the `PORT` you configured).
 
-## Resources
+## API Documentation
 
-Check out a few resources that may come in handy when working with NestJS:
+Interactive Swagger docs are available at:
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+```
+http://localhost:3000/docs
+```
 
-## Support
+### Endpoints Overview
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+#### Health
 
-## Stay in touch
+| Method | Endpoint | Description  | Auth |
+| ------ | -------- | ------------ | ---- |
+| GET    | `/`      | Health check | No   |
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+#### Auth
 
-## License
+| Method | Endpoint         | Description                    | Auth |
+| ------ | ---------------- | ------------------------------ | ---- |
+| POST   | `/auth/register` | Register a new user            | No   |
+| POST   | `/auth/login`    | Log in and receive a JWT token | No   |
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+#### Orders
+
+| Method | Endpoint      | Description                         | Auth |
+| ------ | ------------- | ----------------------------------- | ---- |
+| POST   | `/orders`     | Create a new order with packages    | JWT  |
+| GET    | `/orders`     | List orders (paginated, filterable) | JWT  |
+| GET    | `/orders/:id` | Get a single order by ID            | JWT  |
+
+### Authentication Flow
+
+1. **Register** a new account:
+   ```bash
+   curl -X POST http://localhost:3000/auth/register \
+     -H "Content-Type: application/json" \
+     -d '{
+       "firstnames": "John",
+       "lastnames": "Doe",
+       "sex": "M",
+       "borndate": "1995-06-15",
+       "email": "john@example.com",
+       "phone": "+50312345678",
+       "password": "MySecureP@ss1"
+     }'
+   ```
+
+2. **Log in** to get a token:
+   ```bash
+   curl -X POST http://localhost:3000/auth/login \
+     -H "Content-Type: application/json" \
+     -d '{
+       "email": "john@example.com",
+       "password": "MySecureP@ss1"
+     }'
+   ```
+   Response:
+   ```json
+   { "accessToken": "eyJhbGciOiJIUzI1NiIs..." }
+   ```
+
+3. **Use the token** on protected endpoints:
+   ```bash
+   curl http://localhost:3000/orders \
+     -H "Authorization: Bearer <your_token>"
+   ```
+
+### Pagination & Filtering
+
+`GET /orders` supports query parameters:
+
+| Param       | Type   | Default | Description                         |
+| ----------- | ------ | ------- | ----------------------------------- |
+| `page`      | number | 1       | Page number (starts at 1)           |
+| `limit`     | number | 10      | Items per page                      |
+| `startDate` | string | --      | Filter orders from this date (ISO)  |
+| `endDate`   | string | --      | Filter orders until this date (ISO) |
+
+**Examples:**
+
+```bash
+# Page 2, 5 per page
+GET /orders?page=2&limit=5
+
+# Orders from the first half of 2025
+GET /orders?startDate=2025-01-01&endDate=2025-06-30
+
+# Combined
+GET /orders?page=1&limit=20&startDate=2025-03-01
+```
+
+**Response shape:**
+
+```json
+{
+  "data": [ ... ],
+  "meta": {
+    "total": 24,
+    "page": 1,
+    "limit": 10,
+    "totalPages": 3
+  }
+}
+```
+
+## Project Structure
+
+```
+src/
+├── main.ts                           # Bootstrap, Swagger, global pipes & filters
+├── app.module.ts                     # Root module
+├── app.controller.ts                 # Health check endpoint
+├── auth/
+│   ├── auth.controller.ts            # Register & login endpoints
+│   ├── auth.service.ts               # Auth business logic
+│   ├── config/jwt.config.ts          # JWT configuration
+│   ├── decorators/user.decorator.ts  # @User() param decorator
+│   ├── dto/
+│   │   ├── login.dto.ts
+│   │   └── register.dto.ts
+│   ├── guard/jwt-auth.guard.ts       # JWT route guard
+│   ├── strategies/jwt.strategy.ts    # Passport JWT strategy
+│   └── types/
+│       ├── auth-jwt.payload.ts
+│       └── request-user.ts
+├── orders/
+│   ├── orders.controller.ts          # CRUD endpoints
+│   ├── orders.service.ts             # Business logic & pagination
+│   ├── orders.repository.ts          # Prisma queries
+│   ├── dto/
+│   │   ├── create-order.dto.ts
+│   │   ├── create-package.dto.ts
+│   │   ├── get-orders-query.dto.ts
+│   │   └── update-order-status.dto.ts
+│   └── types/
+│       └── paginated-orders.type.ts
+├── users/
+│   ├── users.service.ts              # User business logic
+│   ├── users.repository.ts           # Prisma queries
+│   └── dto/create-user.dto.ts
+├── crypto/
+│   └── crypto.service.ts             # Password hashing (bcrypt)
+├── prisma/
+│   ├── prisma.module.ts              # Global Prisma module
+│   ├── prisma.service.ts             # Prisma client wrapper
+│   └── prisma-exception.filter.ts    # Global Prisma error handler
+└── generated/prisma/                 # Auto-generated Prisma client
+```
+
+## Architecture Decisions
+
+### Layered Architecture
+
+Each module follows a **Controller > Service > Repository** pattern:
+
+- **Controller** -- Handles HTTP concerns (routes, guards, validation, Swagger docs). No business logic.
+- **Service** -- Business logic, authorization checks, data shaping. No Prisma imports.
+- **Repository** -- Database queries only. Owns all Prisma-specific code.
+
+This separation means swapping the ORM only requires changing the repository layer.
+
+### Error Handling
+
+- **ValidationPipe** (global) -- Rejects invalid request bodies with detailed 400 errors.
+- **PrismaExceptionFilter** (global) -- Catches Prisma errors and maps them to proper HTTP responses:
+
+  | Prisma Code | HTTP Status     | Meaning                |
+  | ----------- | --------------- | ---------------------- |
+  | P2002       | 409 Conflict    | Duplicate unique field |
+  | P2023       | 400 Bad Request | Malformed ObjectId     |
+  | P2025       | 404 Not Found   | Record not found       |
+  | P2003       | 400 Bad Request | Foreign key violation  |
+
+- **NestJS Exceptions** -- Used in services for business-rule violations (`NotFoundException`, `ConflictException`, `UnauthorizedException`).
+
+### Security
+
+- Passwords are hashed with **bcrypt** before storage (configurable salt rounds).
+- JWT tokens expire after **1 hour**.
+- **Ownership enforcement** -- Users can only access their own orders. Requesting another user's order returns 404 (not 403) to avoid leaking order existence.
+- **Validation whitelisting** -- `forbidNonWhitelisted: true` strips and rejects unknown fields.
+- Date inputs are **auto-transformed** to full ISO-8601 via `@Transform`, so both `1995-06-15` and `1995-06-15T00:00:00.000Z` are accepted.
+
+### Database
+
+MongoDB via Prisma ORM with the following indexes:
+
+- `Order.userId` -- Fast lookup for user's orders
+- `Order.createdAt (desc)` -- Supports sorted pagination
+- `Package.orderId` -- Fast join from order to packages
+- `User.email` / `User.phone` -- Unique constraints
+
+## Available Scripts
+
+| Script              | Description                            |
+| ------------------- | -------------------------------------- |
+| `pnpm start:dev`    | Start in development mode (hot reload) |
+| `pnpm start:prod`   | Start production build                 |
+| `pnpm build`        | Compile TypeScript to `dist/`          |
+| `pnpm lint`         | Run ESLint with auto-fix               |
+| `pnpm format`       | Format code with Prettier              |
+| `npx prisma db seed`  | Seed the database with sample data   |
+| `npx prisma studio`   | Open Prisma Studio (visual DB browser) |
