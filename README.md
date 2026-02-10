@@ -2,6 +2,8 @@
 
 REST API for a shipping orders management system built with NestJS, Prisma, and MongoDB.
 
+**Live Demo:** [https://boxful-technical-test-backend.onrender.com/](https://boxful-technical-test-backend.onrender.com/)
+
 ## Tech Stack
 
 | Layer          | Technology                          |
@@ -130,9 +132,8 @@ The server starts on `http://localhost:3000` (or the `PORT` you configured).
 
 Interactive Swagger docs are available at:
 
-```
-http://localhost:3000/docs
-```
+- **Local:** `http://localhost:3000/docs`
+- **Production:** `https://boxful-technical-test-backend.onrender.com/docs`
 
 ### Endpoints Overview
 
