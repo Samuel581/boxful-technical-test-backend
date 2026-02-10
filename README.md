@@ -2,6 +2,8 @@
 
 REST API for a shipping orders management system built with NestJS, Prisma, and MongoDB.
 
+**Live Demo:** [https://boxful-technical-test-backend.onrender.com/](https://boxful-technical-test-backend.onrender.com/)
+
 ## Tech Stack
 
 | Layer          | Technology                          |
@@ -18,13 +20,47 @@ REST API for a shipping orders management system built with NestJS, Prisma, and 
 
 ## Getting Started
 
-### Prerequisites (local)
+### Option A — Docker (recommended)
+
+The only prerequisites are **Docker** and **Docker Compose**.
+
+```bash
+# Clone the repository
+git clone https://github.com/Samuel581/boxful-technical-test-backend.git
+cd boxful-technical-test-backend
+
+# Build and start the API + MongoDB
+docker compose up --build -d
+
+# Seed the database with sample data (one-time)
+docker compose --profile seed run --rm seed
+```
+
+Both Node.js and MongoDB run inside containers — nothing else to install.
+
+| Command | Description |
+| --- | --- |
+| `docker compose up --build -d` | Build images and start the stack in the background |
+| `docker compose --profile seed run --rm seed` | Seed the database (runs once and exits) |
+| `docker compose logs -f api` | Follow API logs |
+| `docker compose down` | Stop all containers |
+| `docker compose down -v` | Stop all containers and wipe the database volume |
+
+To connect **MongoDB Compass** to the containerized database:
+
+```
+mongodb://localhost:27017/boxful?replicaSet=rs0&directConnection=true
+```
+
+### Option B — Local
+
+#### Prerequisites
 
 - Node.js >= 20
 - pnpm >= 9
 - A MongoDB instance (local or Atlas)
 
-### Installation
+#### Installation
 
 ```bash
 # Clone the repository
@@ -40,7 +76,7 @@ cp .env.example .env
 
 ### Environment Variables
 
-Edit the `.env` file with your values:
+Edit the `.env` file with your values (Docker injects these automatically):
 
 ```env
 DATABASE_URL=mongodb+srv://<user>:<password>@<cluster>.mongodb.net/<database>
@@ -56,7 +92,7 @@ PORT=3000
 | `SALT_ROUNDS`  | bcrypt hashing rounds (default: 10)        | No       |
 | `PORT`         | Port the server listens on (default: 3000) | No       |
 
-### Database Setup
+### Database Setup (local only)
 
 ```bash
 # Generate the Prisma client
@@ -96,9 +132,8 @@ The server starts on `http://localhost:3000` (or the `PORT` you configured).
 
 Interactive Swagger docs are available at:
 
-```
-http://localhost:3000/docs
-```
+- **Local:** `http://localhost:3000/docs`
+- **Production:** `https://boxful-technical-test-backend.onrender.com/docs`
 
 ### Endpoints Overview
 
