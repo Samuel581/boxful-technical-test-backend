@@ -29,9 +29,12 @@ export class OrdersService {
     return orders;
   }
 
-  async getOrderById(id: string): Promise<Order | null> {
-    const order = this.ordersRepository.getOrderById(id);
+  async getOrderById(id: string, userId: string): Promise<Order | null> {
+    const order = await this.ordersRepository.getOrderById(id);
     if (!order) {
+      throw new NotFoundException('Order not found');
+    }
+    if (order.userId !== userId) {
       throw new NotFoundException('Order not found');
     }
     return order;

@@ -26,7 +26,7 @@ export class OrdersController {
 
   @Get(':id')
   @UseGuards(JwtAuthGuard)
-  getOrderById(@Param('id') id: string) {
-    return this.ordersService.getOrderById(id);
+  getOrderById(@Param('id') id: string, @User('userId') userId: string) {
+    return this.ordersService.getOrderById(id, userId);
   }
 }
