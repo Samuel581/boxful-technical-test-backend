@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Transform } from 'class-transformer';
 import {
   IsDateString,
   IsEmail,
@@ -42,10 +43,11 @@ export class CreateUserDto {
 
   @ApiProperty({
     description:
-      'Date of birth in full ISO-8601 DateTime format. **Must include the time component** (e.g. `T00:00:00.000Z`), otherwise the server will reject it.',
-    example: '1995-06-15T00:00:00.000Z',
+      'Date of birth in ISO-8601 format. Accepts both `1995-06-15` and `1995-06-15T00:00:00.000Z`.',
+    example: '1995-06-15',
   })
   @IsDateString()
+  @Transform(({ value }) => new Date(value).toISOString())
   borndate: string;
 
   @ApiProperty({
