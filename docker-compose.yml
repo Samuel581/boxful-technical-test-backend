@@ -1,0 +1,55 @@
+services:
+  mongo:
+    image: mongo:7
+    container_name: boxful-mongo
+    command: ["mongod", "--replSet", "rs0", "--bind_ip_all"]
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    healthcheck:
+      test: >
+        mongosh --eval "
+          try { rs.status().ok }
+          catch(e) { rs.initiate({ _id: 'rs0', members: [{ _id: 0, host: 'mongo:27017' }] }).ok }
+        " --quiet
+      interval: 5s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+
+  api:
+    container_name: boxful-api
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "${PORT:-3000}:3000"
+    environment:
+      DATABASE_URL: mongodb://mongo:27017/boxful?replicaSet=rs0&directConnection=true
+      JWT_SECRET: ${JWT_SECRET:-change-me-in-production}
+      PORT: "3000"
+      SALT_ROUNDS: ${SALT_ROUNDS:-10}
+    depends_on:
+      mongo:
+        condition: service_healthy
+    restart: unless-stopped
+
+  seed:
+    container_name: boxful-seed
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: build
+    environment:
+      DATABASE_URL: mongodb://mongo:27017/boxful?replicaSet=rs0&directConnection=true
+      SALT_ROUNDS: ${SALT_ROUNDS:-10}
+    depends_on:
+      mongo:
+        condition: service_healthy
+    command: ["pnpm", "prisma", "db", "seed"]
+    profiles: ["seed"]
+
+volumes:
+  mongo_data:
