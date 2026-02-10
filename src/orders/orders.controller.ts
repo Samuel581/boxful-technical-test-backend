@@ -1,4 +1,4 @@
-import { Controller, UseGuards, Body, Post, Get, Param } from '@nestjs/common';
+import { Controller, UseGuards, Body, Post, Get, Param, Query } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -11,6 +11,7 @@ import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
 import { User } from 'src/auth/decorators/user.decorator';
+import { GetOrdersQueryDTO } from './dto/get-orders-query.dto';
 
 @ApiTags('Orders')
 @ApiBearerAuth()
@@ -50,23 +51,31 @@ export class OrdersController {
   @UseGuards(JwtAuthGuard)
   @ApiOperation({
     summary: 'Get all orders for the authenticated user',
-    description:
-      'Returns all orders belonging to the currently authenticated user, ordered by creation date (newest first). Each order includes its associated packages.',
+    description: `Returns a **paginated** list of orders belonging to the authenticated user, sorted by creation date (newest first). Each order includes its associated packages.
+
+Supports optional **date filtering** via \`startDate\` and \`endDate\` query params.
+
+**Example usage:**
+- \`GET /orders\` — first page, 10 orders, no date filter
+- \`GET /orders?page=2&limit=5\` — second page, 5 per page
+- \`GET /orders?startDate=2025-01-01&endDate=2025-06-30\` — orders from the first half of 2025
+- \`GET /orders?page=1&limit=20&startDate=2025-03-01\` — all combined`,
   })
   @ApiResponse({
     status: 200,
-    description: 'List of orders returned successfully',
+    description:
+      'Paginated list of orders with metadata (`data`, `meta: { total, page, limit, totalPages }`)',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Validation error — invalid query params (e.g. page=0, non-numeric limit)',
   })
   @ApiResponse({
     status: 401,
     description: 'Unauthorized — missing or invalid JWT token',
   })
-  @ApiResponse({
-    status: 404,
-    description: 'User has no orders yet',
-  })
-  async getOrdersByUserId(@User('userId') userId: string) {
-    return this.ordersService.getOrdersByUserId(userId);
+  async getOrdersByUserId(@User('userId') userId: string, @Query() query: GetOrdersQueryDTO) {
+    return this.ordersService.getOrdersByUserId(userId, query);
   }
 
   @Get(':id')
