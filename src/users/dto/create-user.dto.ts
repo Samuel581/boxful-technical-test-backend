@@ -5,6 +5,7 @@ import {
   IsNotEmpty,
   IsString,
   MinLength,
+  Matches,
 } from 'class-validator';
 
 enum Sex {
@@ -33,6 +34,7 @@ export class CreateUserDto {
 
   @IsString()
   @IsNotEmpty()
+  @Matches(/^\+?[0-9]{7,15}$/)
   phone: string;
 
   @IsString()
