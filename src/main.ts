@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { PrismaExceptionFilter } from './prisma/prisma-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -38,10 +39,7 @@ Users can only access their own orders. Attempting to access another user's orde
       description:
         'Enter the JWT token obtained from the POST /auth/login endpoint',
     })
-    .addTag(
-      'Health',
-      'Health check endpoint to verify the API is running',
-    )
+    .addTag('Health', 'Health check endpoint to verify the API is running')
     .addTag(
       'Auth',
       'Authentication endpoints for user registration and login. These are public and do not require a token.',
@@ -55,8 +53,7 @@ Users can only access their own orders. Attempting to access another user's orde
   const documentFactory = () =>
     SwaggerModule.createDocument(app, swaggerOptions);
 
-  SwaggerModule.setup('docs', app, documentFactory)
-
+  SwaggerModule.setup('docs', app, documentFactory);
 
   app.enableCors({
     origin: [
@@ -66,6 +63,7 @@ Users can only access their own orders. Attempting to access another user's orde
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   });
+  app.useGlobalFilters(new PrismaExceptionFilter());
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,

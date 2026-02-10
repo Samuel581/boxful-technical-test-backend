@@ -28,7 +28,8 @@ export class OrdersController {
   @ApiBody({ type: CreateOrderDto })
   @ApiResponse({
     status: 201,
-    description: 'Order created successfully — returns the full order object with its packages',
+    description:
+      'Order created successfully — returns the full order object with its packages',
   })
   @ApiResponse({
     status: 400,
@@ -60,6 +61,10 @@ export class OrdersController {
     status: 401,
     description: 'Unauthorized — missing or invalid JWT token',
   })
+  @ApiResponse({
+    status: 404,
+    description: 'User has no orders yet',
+  })
   async getOrdersByUserId(@User('userId') userId: string) {
     return this.ordersService.getOrdersByUserId(userId);
   }
@@ -69,7 +74,7 @@ export class OrdersController {
   @ApiOperation({
     summary: 'Get a single order by ID',
     description:
-      'Returns a specific order by its ID. The authenticated user must be the owner of the order, otherwise a `403 Forbidden` error is returned.',
+      'Returns a specific order by its ID. The authenticated user must be the owner of the order, otherwise a `404 Not Found` is returned to avoid leaking order existence.',
   })
   @ApiParam({
     name: 'id',
@@ -81,16 +86,16 @@ export class OrdersController {
     description: 'Order returned successfully with its packages',
   })
   @ApiResponse({
+    status: 400,
+    description: 'Bad Request — malformed ObjectId format',
+  })
+  @ApiResponse({
     status: 401,
     description: 'Unauthorized — missing or invalid JWT token',
   })
   @ApiResponse({
-    status: 403,
-    description: 'Forbidden — the order belongs to another user',
-  })
-  @ApiResponse({
     status: 404,
-    description: 'Order not found',
+    description: 'Order not found or belongs to another user',
   })
   getOrderById(@Param('id') id: string, @User('userId') userId: string) {
     return this.ordersService.getOrderById(id, userId);

@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import {
   ArrayMinSize,
   IsOptional,
@@ -23,10 +23,11 @@ export class CreateOrderDto {
 
   @ApiProperty({
     description:
-      'Scheduled date for the pickup in full ISO-8601 DateTime format. **Must include the time component** (e.g. `T10:00:00.000Z`).',
+      'Scheduled date for the pickup in ISO-8601 format. Accepts both `2025-07-20` and `2025-07-20T10:00:00.000Z`.',
     example: '2025-07-20T10:00:00.000Z',
   })
   @IsDateString()
+  @Transform(({ value }) => new Date(value).toISOString())
   programedDate: string;
 
   @ApiProperty({
