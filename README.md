@@ -203,7 +203,7 @@ Interactive Swagger docs are available at:
 
 ### Pagination & Filtering
 
-`GET /orders` supports query parameters:
+`GET /orders` supports query parameters, the date related ones filter by date on the `programedDate` field:
 
 | Param       | Type   | Default | Description                         |
 | ----------- | ------ | ------- | ----------------------------------- |
@@ -322,7 +322,7 @@ This separation means swapping the ORM only requires changing the repository lay
 MongoDB via Prisma ORM with the following indexes:
 
 - `Order.userId` -- Fast lookup for user's orders
-- `Order.createdAt (desc)` -- Supports sorted pagination
+- `Order.programedDate (desc)` -- Supports sorted pagination
 - `Package.orderId` -- Fast join from order to packages
 - `User.email` / `User.phone` -- Unique constraints
 
