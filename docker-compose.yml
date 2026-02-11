@@ -18,6 +18,8 @@ services:
       retries: 5
       start_period: 10s
     restart: unless-stopped
+    networks:
+      - boxful-network
 
   api:
     container_name: boxful-api
@@ -35,6 +37,8 @@ services:
       mongo:
         condition: service_healthy
     restart: unless-stopped
+    networks:
+      - boxful-network
 
   seed:
     container_name: boxful-seed
@@ -50,6 +54,12 @@ services:
         condition: service_healthy
     command: ["pnpm", "prisma", "db", "seed"]
     profiles: ["seed"]
+    networks:
+      - boxful-network
 
 volumes:
   mongo_data:
+
+networks:
+  boxful-network:
+    external: true
