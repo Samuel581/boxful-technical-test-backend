@@ -58,6 +58,7 @@ Users can only access their own orders. Attempting to access another user's orde
   app.enableCors({
     origin: [
       'http://localhost:3000',
+      'http://localhost:8080',
       'https://boxful-technical-test-frontend.vercel.app/',
     ],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
