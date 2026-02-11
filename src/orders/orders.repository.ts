@@ -25,7 +25,7 @@ export class OrdersRepository {
       userId,
       ...(startDate || endDate
         ? {
-            createdAt: {
+            programedDate: {
               ...(startDate && { gte: new Date(startDate) }),
               ...(endDate && { lte: new Date(endDate) }),
             },

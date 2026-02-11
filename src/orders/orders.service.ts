@@ -23,6 +23,9 @@ export class OrdersService {
     return order;
   }
 
+
+  // No error messages, in the response data will show 0 orders if there is an error
+  // or if the query does not match any orders made by the user
   async getOrdersByUserId(userId: string, query: GetOrdersQueryDTO): Promise<PaginatedOrders> {
     const { page, limit, startDate, endDate } = query;
     const skip = (page - 1) * limit;
