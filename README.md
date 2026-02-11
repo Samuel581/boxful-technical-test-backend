@@ -29,6 +29,9 @@ The only prerequisites are **Docker** and **Docker Compose**.
 git clone https://github.com/Samuel581/boxful-technical-test-backend.git
 cd boxful-technical-test-backend
 
+# Create the shared Docker network (one-time, shared with the frontend)
+docker network create boxful-network
+
 # Build and start the API + MongoDB
 docker compose up --build -d
 
@@ -38,8 +41,11 @@ docker compose --profile seed run --rm seed
 
 Both Node.js and MongoDB run inside containers — nothing else to install.
 
+Both the backend and the [frontend](https://github.com/Samuel581/boxful-technical-test-frontend) share the `boxful-network` Docker network so they can communicate when running side by side. The frontend will be available at `http://localhost:8080` and the backend at `http://localhost:3000`.
+
 | Command | Description |
 | --- | --- |
+| `docker network create boxful-network` | Create the shared network (one-time) |
 | `docker compose up --build -d` | Build images and start the stack in the background |
 | `docker compose --profile seed run --rm seed` | Seed the database (runs once and exits) |
 | `docker compose logs -f api` | Follow API logs |
